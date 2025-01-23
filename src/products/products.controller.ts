@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -12,9 +11,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { Services } from '../common/constants';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { PaginationDto } from '../common/dto';
-import { firstValueFrom } from 'rxjs';
+import { catchError } from 'rxjs';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -24,8 +25,11 @@ export class ProductsController {
   ) {}
 
   @Post()
-  createProduct() {
-    return 'crea producto';
+  createProduct(@Body() createProductDto: CreateProductDto) {
+    return this.productsClient.send(
+      { cmd: 'create_product' },
+      createProductDto,
+    );
   }
 
   @Get()
@@ -38,23 +42,41 @@ export class ProductsController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    try {
-      const product = await firstValueFrom(
-        this.productsClient.send({ cmd: 'find_one_product' }, { id }),
-      );
-      return product;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
+    return this.productsClient.send({ cmd: 'find_one_product' }, { id }).pipe(
+      catchError((err) => {
+        throw new RpcException(err);
+      }),
+    );
+    // try {
+    //   const product = await firstValueFrom(
+    //     this.productsClient.send({ cmd: 'find_one_product' }, { id }),
+    //   );
+    //   return product;
+    // } catch (error) {
+    //   throw new RpcException(error);
+    // }
   }
 
   @Patch(':id')
-  updateProduct(@Param('id') id: string, @Body() product: any) {
-    return `actualiza producto ${id}`;
+  updateProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return this.productsClient
+      .send({ cmd: 'update_product' }, { id, ...updateProductDto })
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(err);
+        }),
+      );
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string) {
-    return `elimina un producto ${id}`;
+  deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productsClient.send({ cmd: 'delete_product' }, { id }).pipe(
+      catchError((err) => {
+        throw new RpcException(err);
+      }),
+    );
   }
 }
