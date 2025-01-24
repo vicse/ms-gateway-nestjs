@@ -22,7 +22,7 @@ import { StatusDto } from './dto/status.dto';
 @Controller('orders')
 export class OrdersController {
   constructor(
-    @Inject(Services.ORDER_SERVICE)
+    @Inject(Services.NATS_SERVICE)
     private readonly ordersClient: ClientProxy,
   ) {}
 

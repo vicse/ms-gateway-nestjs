@@ -8,11 +8,10 @@ import { envs } from '../common/config';
   imports: [
     ClientsModule.register([
       {
-        name: Services.ORDER_SERVICE,
-        transport: Transport.TCP,
+        name: Services.NATS_SERVICE,
+        transport: Transport.NATS,
         options: {
-          host: envs.ordersMsHost,
-          port: envs.ordersMsPort,
+          servers: envs.natsServers,
         },
       },
     ]),
