@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { envs } from './config';
+import { envs } from './common/config';
 import { RpcCustomExceptionFilter } from './common/filters';
 
 async function bootstrap() {
