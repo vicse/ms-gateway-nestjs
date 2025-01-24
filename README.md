@@ -18,7 +18,12 @@ $ docker compose up -d
 ```bash
 $ npm install
 ```
-5. Levantar el proyecto con:
+5. Levantar servidor de NATS
+```bash
+docker run -d --name transports-main -p 4222:4222 -p 6222:6222 -p 8222:8222 transports
+```
+
+6. Levantar el proyecto
 
 ```bash
 # development
