@@ -37,3 +37,9 @@ $ npm run start:dev
 ```bash
 docker run -d --name transports-main -p 4222:4222 -p 6222:6222 -p 8222:8222 nats
 ```
+
+## PROD
+Levantar proyecto en entorno en produccion
+```bash
+docker build -f Dockerfile.prod -t ms-gateway .
+```
